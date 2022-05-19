@@ -1,15 +1,15 @@
 {
 	"name": "kup-cli",
-	"version": "0.0.0-alpha.1",
+	"version": "0.0.0-alpha.2",
 	"description": "A CLI tool to post Markdown files to GitHub as issues.",
-	"main": "index.js",
+	"bin": {
+		"kup": "./bin/cli.js"
+	},
 	"scripts": {
+		"postpublish": "npx npm-mirror-sync",
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/cssmagic/kup.git"
-	},
+	"repository": "cssmagic/kup",
 	"keywords": [
 		"cli",
 		"markdown",
@@ -21,9 +21,14 @@
 	"engines": {
 		"node": ">=12"
 	},
-	"dependencies": {},
+	"dependencies": {
+		"gh-got": "^9.0.0",
+		"yaml": "^2.1.0",
+		"yargs": "^17.5.0"
+	},
 	"files": [
 		"*.js",
+		"lib/",
 		"bin/"
 	],
 	"publishConfig": {
