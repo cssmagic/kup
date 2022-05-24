@@ -27,13 +27,13 @@ const argv = yargs
 	})
 	.alias('v', 'version')
 	.alias('h', 'help')
-	.argv
+	.parse()
 
 // debug
 // console.log('[Kup] [Debug] argv =', argv)
 
 // validate args
-validate(argv)
+if (!validate(argv)) process.exit(1)
 
 // do the job
 main(argv)
