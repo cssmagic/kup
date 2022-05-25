@@ -2,13 +2,19 @@
 'use strict'
 
 const yargs = require('yargs')
+const { isDebugging } = require('../lib/util')
 const { main } = require('../lib/main')
 const { validate } = require('../lib/validate')
+
+if (isDebugging()) {
+	console.log('[Kup] [Debug] Debug Mode is ON!')
+	console.log('')
+}
 
 const argv = yargs
 	.scriptName('kup')
 	.usage('Usage: $0 <file> [options]')
-	.example('kup foo.md --repo aaa/bbb --id 13', '// sync foo.md to GitHub issue aaa/bbb#13')
+	.example('kup foo.md --repo aaa/bbb --id 123', '// sync foo.md to GitHub issue aaa/bbb#123')
 	.option('repo', {
 		alias: 'r',
 		type: 'string',
@@ -30,7 +36,9 @@ const argv = yargs
 	.parse()
 
 // debug
-// console.log('[Kup] [Debug] argv =', argv)
+if (isDebugging()) {
+	console.log('[Kup] [Debug] argv =', argv)
+}
 
 // validate args
 if (!validate(argv)) process.exit(1)
