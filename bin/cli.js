@@ -13,6 +13,7 @@ if (isDebugging()) {
 
 const argv = yargs
 	.scriptName('kup')
+	.usage('Kup -- A CLI tool to sync local Markdown files to GitHub issues.')
 	.usage('Usage: $0 <file> [options]')
 	.example('kup foo.md --repo aaa/bbb --id 123', '// sync foo.md to GitHub issue aaa/bbb#123')
 	.option('repo', {
