@@ -1,11 +1,12 @@
 {
 	"name": "kup-cli",
 	"version": "0.0.0-alpha.2",
-	"description": "A CLI tool to post Markdown files to GitHub as issues.",
+	"description": "A CLI tool to sync local Markdown files to GitHub issues.",
 	"bin": {
 		"kup": "./bin/cli.js"
 	},
 	"scripts": {
+		"debug": "export KUP_DEBUG_MODE=1",
 		"postpublish": "npx npm-mirror-sync",
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
@@ -22,9 +23,14 @@
 		"node": ">=12"
 	},
 	"dependencies": {
+		"find-up": "^5.0.0",
 		"gh-got": "^9.0.0",
+		"inquirer": "^8.2.4",
 		"yaml": "^2.1.0",
 		"yargs": "^17.5.0"
+	},
+	"devDependencies": {
+		"https-proxy-agent": "^5.0.1"
 	},
 	"files": [
 		"*.js",
