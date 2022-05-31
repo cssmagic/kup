@@ -1,6 +1,6 @@
 {
 	"name": "kup-cli",
-	"version": "0.0.0-alpha.2",
+	"version": "0.1.0-beta.1",
 	"description": "A CLI tool to sync local Markdown files to GitHub issues.",
 	"bin": {
 		"kup": "./bin/cli.js"
