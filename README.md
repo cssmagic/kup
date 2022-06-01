@@ -1,10 +1,10 @@
 # Kup
 
+<img src="https://user-images.githubusercontent.com/1231359/171321963-e8e73bdf-f9c8-435b-9707-318e92f1805a.png" width="150" height="80" align="right" alt="Kup logo">
+
 > A CLI tool to sync local Markdown files to GitHub issues.
 >
-> 这款命令行工具可以把本地 Markdown 文件同步到 GitHub issue。
-
-![Kup logo](https://user-images.githubusercontent.com/1231359/171189409-4469e2d4-9ff1-4b6b-8a73-d95d3434a5c6.png)
+> 这款命令行工具可以把本地的 Markdown 文件同步到 GitHub issue。
 
 ## 谁需要它
 
