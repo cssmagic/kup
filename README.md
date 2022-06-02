@@ -46,9 +46,7 @@ Kup 会把 `file.md` 文件的内容更新到 `foo/bar` 仓库的编号为 `123`
 
 操作 GitHub issue 是需要权限认证的，因此你需要向 Kup 提供 GitHub token，以便 Kup 调用 GitHub API。
 
-1. 进入 [此页面](https://github.com/settings/tokens) 申请 “Personal access tokens”，权限范围需要选中 “repo”。
-
-	> 友情提示：不要把 token 告诉其他人；不要把 token 写进代码。
+1. 在 GitHub 的 “[Personal access tokens](https://github.com/settings/tokens)” 页面生成一个新 token，权限范围需要选中 “repo”。（详细说明参见 [这篇文档](https://github.com/cssmagic/kup/issues/17)。）
 
 2. 把获取到的 token 写入环境变量：
 
@@ -118,6 +116,7 @@ Kup 通过以下线索来确定 issue 的标题，优先级递减：
 ## 文档
 
 * [Markdown 文件内的元数据示例](https://github.com/cssmagic/kup/issues/1)
+* [如何为 Kup 生成合适的 GitHub token](https://github.com/cssmagic/kup/issues/17)
 
 
 ## 其它
