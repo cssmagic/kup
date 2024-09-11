@@ -132,10 +132,14 @@ Kup 通过以下线索来确定 issue 的标题，优先级递减：
 
 ### 关于 Logo
 
-* 作者 [Fasil](https://freeicons.io/profile/722)，由 [freeicons.io](https://freeicons.io/free-icons-pack/pickup-truck-icon-26893) 免费提供。
+* 作者 [Fasil](https://freeicons.io/profile/722)，由 [freeicons.io](https://freeicons.io/icon/e-commerce-icons/pickup-truck-icon-26893) 免费提供。
 
 ***
 
 ## License
+
+> Any code contributed to this project is considered authorized for commercial use by the project authors and their affiliated companies and distributed under this project's license.
+>
+> 任何贡献到本项目的代码，均视为授权本项目作者及其名下公司用于商业用途、并按本项目协议分发。
 
 MIT
