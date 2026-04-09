@@ -1,13 +1,11 @@
 ---
-repo: aaa/bbb
-id: 123
-tags:
-  - JS
-  - RFC
-title: Title in meta section
+repo: cssmagic/kup-demo
+#id: 2
+tags: []
+#title: Title in meta section
 ---
 
-# 一级标题
+# 一级标题测试
 
 ## 二级标题
 
