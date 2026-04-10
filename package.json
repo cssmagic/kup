@@ -4,14 +4,17 @@
 	"description": "A CLI tool to sync local Markdown files to GitHub issues.",
 	"type": "module",
 	"bin": {
-		"kup": "./bin/cli.js"
+		"kup": "bin/cli.js"
 	},
 	"scripts": {
 		"debug": "export KUP_DEBUG_MODE=1",
 		"postpublish": "npx npm-mirror-sync",
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
-	"repository": "cssmagic/kup",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/cssmagic/kup.git"
+	},
 	"keywords": [
 		"cli",
 		"markdown",
