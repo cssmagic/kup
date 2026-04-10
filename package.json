@@ -2,6 +2,7 @@
 	"name": "kup-cli",
 	"version": "0.1.0-beta.2",
 	"description": "A CLI tool to sync local Markdown files to GitHub issues.",
+	"type": "module",
 	"bin": {
 		"kup": "./bin/cli.js"
 	},
@@ -20,7 +21,7 @@
 	"author": "cssmagic <cssmagic.cn@gmail.com>",
 	"license": "MIT",
 	"engines": {
-		"node": ">=12"
+		"node": ">=18"
 	},
 	"dependencies": {
 		"find-up": "^5.0.0",

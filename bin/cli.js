@@ -1,17 +1,16 @@
 #!/usr/bin/env node
-'use strict'
-
-const yargs = require('yargs')
-const { isDebugging } = require('../lib/util')
-const { main } = require('../lib/main')
-const { validate } = require('../lib/validate')
+import yargs from 'yargs'
+import { hideBin } from 'yargs/helpers'
+import { isDebugging } from '../lib/util.js'
+import { main } from '../lib/main.js'
+import { validate } from '../lib/validate.js'
 
 if (isDebugging()) {
 	console.log('[Kup] [Debug] Debug Mode is ON!')
 	console.log('')
 }
 
-const argv = yargs
+const argv = yargs(hideBin(process.argv))
 	.scriptName('kup')
 	.usage('Kup -- A CLI tool to sync local Markdown files to GitHub issues.')
 	.usage('Usage: $0 <file> [options]')
