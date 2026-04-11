@@ -4,8 +4,12 @@ import path from 'path'
 
 import { afterEach, describe, expect, it } from 'vitest'
 
-import { getRepo } from '../../lib/repo.js'
-import { fixturePath } from '../helpers/paths.js'
+import {
+	__getRepoFromPkgKup,
+	__getRepoFromPkgRepo,
+	__normalizeRepositoryToRepo,
+	getRepo,
+} from '../../lib/repo.js'
 
 const tempDirs = []
 
@@ -15,7 +19,19 @@ afterEach(async () => {
 
 describe('getRepo()', () => {
 	it('finds kup.repo by walking upward from the markdown file path', async () => {
-		const repo = await getRepo(fixturePath('no-meta.md'))
+		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'kup-repo-test-'))
+		tempDirs.push(tempDir)
+		const nestedDir = path.join(tempDir, 'docs', 'notes')
+		await fs.mkdir(nestedDir, { recursive: true })
+		const sourceFile = path.join(nestedDir, 'note.md')
+		await fs.writeFile(sourceFile, '# Temporary note\n', 'utf8')
+		await fs.writeFile(path.join(tempDir, 'package.json'), JSON.stringify({
+			kup: {
+				repo: 'cssmagic/kup-demo',
+			},
+		}, null, '\t'), 'utf8')
+
+		const repo = await getRepo(sourceFile)
 
 		expect(repo).toEqual({
 			repo: 'cssmagic/kup-demo',
@@ -97,5 +113,95 @@ describe('getRepo()', () => {
 			source: '',
 			needsConfirm: false,
 		})
+	})
+})
+
+describe('normalizeRepositoryToRepo()', () => {
+	it.each([
+		['cssmagic/kup', 'cssmagic/kup'],
+		['github:cssmagic/kup', 'cssmagic/kup'],
+		['https://github.com/cssmagic/kup', 'cssmagic/kup'],
+		['https://github.com/cssmagic/kup/', 'cssmagic/kup'],
+		['git+https://github.com/cssmagic/kup.git', 'cssmagic/kup'],
+		['git@github.com:cssmagic/kup.git', 'cssmagic/kup'],
+		['ssh://git@github.com/cssmagic/kup.git', 'cssmagic/kup'],
+		['github:cssmagic/kup.cli', 'cssmagic/kup.cli'],
+	])('normalizes %s', (input, expected) => {
+		expect(__normalizeRepositoryToRepo(input)).toBe(expected)
+	})
+
+	it.each([
+		'',
+		'   ',
+		'https://gitlab.com/cssmagic/kup',
+		'git+https://example.com/cssmagic/kup.git',
+		'not a repo',
+		'cssmagic',
+	])('returns empty string for unsupported input: %s', (input) => {
+		expect(__normalizeRepositoryToRepo(input)).toBe('')
+	})
+})
+
+describe('_getRepoFromPkgKup()', () => {
+	it('returns the repo and marks the field as present when kup.repo is valid', () => {
+		expect(__getRepoFromPkgKup({
+			kup: {
+				repo: 'cssmagic/kup',
+			},
+		})).toEqual({
+			repo: 'cssmagic/kup',
+			hasRepoField: true,
+		})
+	})
+
+	it('returns an empty repo but preserves field presence when kup.repo is invalid', () => {
+		expect(__getRepoFromPkgKup({
+			kup: {
+				repo: 'invalid repo',
+			},
+		})).toEqual({
+			repo: '',
+			hasRepoField: true,
+		})
+	})
+
+	it('returns empty repo and no field marker when kup.repo is absent', () => {
+		expect(__getRepoFromPkgKup({
+			kup: {},
+		})).toEqual({
+			repo: '',
+			hasRepoField: false,
+		})
+	})
+})
+
+describe('_getRepoFromPkgRepo()', () => {
+	it('extracts repo from a repository string', () => {
+		expect(__getRepoFromPkgRepo({
+			repository: 'github:cssmagic/kup',
+		})).toBe('cssmagic/kup')
+	})
+
+	it('extracts repo from repository.url object form', () => {
+		expect(__getRepoFromPkgRepo({
+			repository: {
+				type: 'git',
+				url: 'git+https://github.com/cssmagic/kup.git',
+			},
+		})).toBe('cssmagic/kup')
+	})
+
+	it('returns empty string when repository object has no url', () => {
+		expect(__getRepoFromPkgRepo({
+			repository: {
+				type: 'git',
+			},
+		})).toBe('')
+	})
+
+	it('returns empty string for unsupported repository values', () => {
+		expect(__getRepoFromPkgRepo({
+			repository: 42,
+		})).toBe('')
 	})
 })
