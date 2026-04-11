@@ -1,7 +1,11 @@
 {
 	"name": "kup-demo",
 	"private": true,
-	"kup": {
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/cssmagic/kup-demo.git"
+	},
+	"xx.kup": {
 		"repo": "cssmagic/kup-demo"
 	}
 }
