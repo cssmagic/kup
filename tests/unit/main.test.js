@@ -6,6 +6,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import { KupError } from '../../lib/error.js'
 import { main } from '../../lib/main.js'
+import * as syncModule from '../../lib/sync.js'
 
 const tempDirs = []
 
@@ -66,6 +67,28 @@ describe('main()', () => {
 			meta: {},
 			title: 'Title',
 			content: 'Body\n',
+		})
+	})
+
+	it('passes repo source metadata to postIssue() when creating a new issue', async () => {
+		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'kup-main-test-'))
+		tempDirs.push(tempDir)
+		const filename = path.join(tempDir, 'note.md')
+		await fs.writeFile(filename, '# Title\n\nBody\n', 'utf8')
+		process.env.GITHUB_TOKEN = 'ghp_test_token_value_12345'
+
+		const postSpy = vi.spyOn(syncModule, 'postIssue').mockResolvedValue(undefined)
+
+		await expect(main({
+			_: [filename],
+			repo: 'cssmagic/kup',
+			id: 0,
+		})).resolves.toBeUndefined()
+
+		expect(postSpy).toHaveBeenCalledWith(expect.any(Object), 'cssmagic/kup', {
+			file: filename,
+			repoSource: 'cli',
+			hasRepoInMeta: false,
 		})
 	})
 })
