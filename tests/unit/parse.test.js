@@ -58,4 +58,16 @@ describe('parse()', () => {
 			content: 'Body',
 		})
 	})
+
+	it('throws a KupError for invalid YAML front matter', () => {
+		const input = [
+			'---',
+			'tags: [a,',
+			'---',
+			'',
+			'# Title',
+		].join('\n')
+
+		expect(() => parse(input)).toThrowError('[Kup] [Error] Cannot parse YAML meta section:')
+	})
 })

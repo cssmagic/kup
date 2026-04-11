@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import yargs from 'yargs'
 import { hideBin } from 'yargs/helpers'
+import { printKupError } from '../lib/error.js'
 import { isDebugging } from '../lib/util.js'
 import { main } from '../lib/main.js'
 import { validate } from '../lib/validate.js'
@@ -47,4 +48,10 @@ if (!validate(argv)) process.exit(1)
 main(argv)
 	.then(() => {
 		console.log('[Kup] Done!')
+	})
+	.catch((error) => {
+		if (!printKupError(error)) {
+			console.error(error)
+		}
+		process.exit(error.exitCode || 1)
 	})
