@@ -1,5 +1,4 @@
 ---
-repo: cssmagic/kup
 id: 17
 tags: [Doc]
 ---
