@@ -1,7 +1,7 @@
 ---
 repo: cssmagic/kup
 id: 17
-tags: Doc
+tags: [Doc]
 ---
 
 # 如何为 Kup 生成合适的 GitHub token
@@ -19,7 +19,7 @@ tags: Doc
 1. 在生成新 token 之前，GitHub 通常会要求你输入登录密码来验证身份。毕竟是涉及身份和权限的敏感操作，安全第一。
 
 	![password](https://user-images.githubusercontent.com/1231359/171684255-cd3a071f-1135-42b1-a2bb-e5922ce27ae4.png)
-	
+
 1. 验证通过，进入生成 token 的表单，填写必要的信息：
 	* 在 “Note” 一栏输入用途（比如给 Kup 用的就填 “Kup”）。
 	* 在 “Expiration” 一栏选择 token 的有效期。出于安全考虑，GitHub 不建议选择无限期。
@@ -28,7 +28,7 @@ tags: Doc
 		* 如果需要在私有仓库发布或更新 issue，需要选择 “repo”。
 
 	![gen](https://user-images.githubusercontent.com/1231359/171684221-24237602-5fa4-4622-8e68-8a28f005ef75.png)
-	
+
 	点击页面底部的 “Generate token” 按钮即可生成新 token。
 
 1. 随后我们回到第 1 步的 token 列表页，可以看到新 token 的明文，我们需要立即把它复制下来并妥善保管。因为刷新页面之后，GitHub 将不再展示 token 内容。如果遗忘了这个 token，我们只能把它删除后重新生成。
