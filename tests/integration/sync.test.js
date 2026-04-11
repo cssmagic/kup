@@ -79,6 +79,7 @@ describe('sync', () => {
 		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'kup-sync-integration-'))
 		tempDirs.push(tempDir)
 		const filename = path.join(tempDir, 'note.md')
+		const logSpy = vi.spyOn(console, 'log').mockImplementation(() => {})
 		await fs.writeFile(filename, [
 			'---',
 			'id:',
@@ -125,5 +126,6 @@ describe('sync', () => {
 			'',
 			'Body content',
 		].join('\n'))
+		expect(logSpy).toHaveBeenCalledWith(`[Kup] [Notice] Updated metadata in Markdown file: ${ filename }`)
 	})
 })
