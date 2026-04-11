@@ -75,6 +75,26 @@ describe('updateIssueMeta()', () => {
 		].join('\n'))
 	})
 
+	it('puts the new front matter on the first line even when the file starts with blank lines', () => {
+		const input = '\n\n# Title\n\nBody\n'
+
+		expect(updateIssueMeta(input, {
+			id: 7,
+			repo: 'cssmagic/kup',
+			shouldWriteRepo: true,
+		})).toBe([
+			'---',
+			'repo: cssmagic/kup',
+			'id: 7',
+			'---',
+			'',
+			'# Title',
+			'',
+			'Body',
+			'',
+		].join('\n'))
+	})
+
 	it('skips writing repo when it comes from package.json', () => {
 		const input = [
 			'---',
