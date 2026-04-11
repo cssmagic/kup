@@ -9,7 +9,10 @@
 	"scripts": {
 		"debug": "export KUP_DEBUG_MODE=1",
 		"postpublish": "npx npm-mirror-sync",
-		"test": "echo \"Error: no test specified\" && exit 1"
+		"test": "vitest run",
+		"test:watch": "vitest",
+		"test:unit": "vitest run tests/unit",
+		"test:integration": "vitest run tests/integration"
 	},
 	"repository": {
 		"type": "git",
@@ -34,7 +37,10 @@
 		"yargs": "^18.0.0"
 	},
 	"devDependencies": {
-		"https-proxy-agent": "^9.0.0"
+		"execa": "^9.6.1",
+		"https-proxy-agent": "^9.0.0",
+		"nock": "^14.0.12",
+		"vitest": "^4.1.4"
 	},
 	"files": [
 		"*.js",
