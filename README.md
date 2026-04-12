@@ -18,7 +18,7 @@
 需要全局安装，以便随时在命令行调用：
 
 ```sh
-npm i -g kup-cli
+npm install -g kup-cli
 ```
 
 （当 Kup 发布新版时，可以再次运行这行命令升级已安装的版本。）
@@ -50,9 +50,9 @@ Kup 会把 `file.md` 文件的内容更新到 `foo/bar` 仓库的编号为 `123`
 
 2. 把获取到的 token 写入环境变量：
 
-	```sh
-	export GITHUB_TOKEN=ghp_**********
-	```
+   ```sh
+   export GITHUB_TOKEN=ghp_**********
+   ```
 
 如果 Kup 未能从环境变量获取 token，会在命令行向你询问。
 
@@ -62,7 +62,7 @@ Kup 会把 `file.md` 文件的内容更新到 `foo/bar` 仓库的编号为 `123`
 参数 | 短名 | 值类型 | 含义 | 备注
 ---|---|---|---|---
 `--repo` | `-r` | 字符串 | 指定 GitHub 仓库
-`--id` | `-i` | 整数 | 指定 issue 的编号 | <li>指定编号表示更新已有 issue<li>未指定编号则表示发布新 issue
+`--id` | `-i` | 整数 | 指定 issue 的编号 | <ul><li>指定编号表示更新已有 issue<li>未指定编号则表示发布新 issue</ul>
 `--version` | `-v` | - | 显示版本号
 `--help` | `-h` | - | 显示帮助信息
 
@@ -79,7 +79,7 @@ Kup 会把 `file.md` 文件的内容更新到 `foo/bar` 仓库的编号为 `123`
 1. 如果 `package.json` 文件内没有 `kup.repo` 字段，则 Kup 会尝试根据 `repository` 字段来猜测仓库名（在使用前会向用户确认）。
 1. 如果以上方式都没有成功，则 Kup 会继续查找同级或上级目录中的 `.git/config` 文件，并尝试根据其中 `remote "origin"` 的 `url` 字段来猜测仓库名（在使用前会向用户确认）。
 
-如果整个项目的同步目标都是同一个仓库，则建议采用 `kup.repo` 字段统一指定 `repo` 参数。
+如果整个项目的同步目标都是同一个仓库，通常建议在 `package.json` 里统一配置 `kup.repo`。
 
 ### 如何更方便地指定 `id` 参数？
 
@@ -88,11 +88,11 @@ Kup 会把 `file.md` 文件的内容更新到 `foo/bar` 仓库的编号为 `123`
 1. 调用命令行时指定的 `--id` 参数。
 1. Markdown 文件内的元数据的 `id` 字段。
 
-当一个文件发布成功后，建议立即把 id 写入它的元数据。
+当一个文件成功发布为 issue 后，Kup 会立即把 `id` 写入它的元数据中。
 
-### Issue 的标题是怎么确定的？
+### Issue 的标题是如何确定的？
 
-Kup 通过以下线索来确定 issue 的标题，优先级递减：
+Kup 会通过以下线索来确定 issue 的标题，优先级递减：
 
 1. Markdown 文件内的元数据的 `title` 字段。
 1. Markdown 正文的第一个标记如果是一级标题（`# Title` 格式），则取它的内容（在这种情况下，这个一级标题在同步时会从内容中排除）。
@@ -104,7 +104,7 @@ Kup 通过以下线索来确定 issue 的标题，优先级递减：
 
 ### 如何为 issue 指定 label？
 
-不论是在写博客，还是在发表 issue，你常常都会有打标签的需求。于是 Kup 也实现了这个功能。
+不论是在写博客，还是在发表 issue，你常常都会有打标签的需求。因此 Kup 也实现了这个功能。
 
 你需要在 Markdown 文件的元数据中添加 `tags` 字段，指定一个或多个 label。这些 label 不需要事先在 GitHub 仓库里创建好——如果你指定了不存在的 label，会在发布 issue 时自动创建。
 
@@ -125,7 +125,8 @@ Kup 通过以下线索来确定 issue 的标题，优先级递减：
 
 ### 开发计划
 
-请参考 [本项目的 issue](https://github.com/cssmagic/kup/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc)。欢迎提出你的需求，或参与 RFC 讨论。
+* 请参考 [本项目的 issue 列表](https://github.com/cssmagic/kup/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc) 来了解当前规划。
+* 欢迎提交需求，或参与 RFC 讨论。
 
 ### 关于名字
 
@@ -134,7 +135,7 @@ Kup 通过以下线索来确定 issue 的标题，优先级递减：
 
 ### 关于 Logo
 
-* 作者 [Fasil](https://freeicons.io/profile/722)，由 [freeicons.io](https://freeicons.io/icon/e-commerce-icons/pickup-truck-icon-26893) 免费提供。
+* Logo 由 [Fasil](https://freeicons.io/profile/722) 创作，并通过 [freeicons.io](https://freeicons.io/icon/e-commerce-icons/pickup-truck-icon-26893) 免费提供。
 
 ***
 
@@ -142,6 +143,6 @@ Kup 通过以下线索来确定 issue 的标题，优先级递减：
 
 > Any code contributed to this project is considered authorized for commercial use by the project authors and their affiliated companies and distributed under this project's license.
 >
-> 任何贡献到本项目的代码，均视为授权本项目作者及其名下公司用于商业用途、并按本项目协议分发。
+> 任何贡献到本项目的代码，均视为授权本项目作者及其关联公司用于商业用途，并可按本项目协议进行分发。
 
 MIT
