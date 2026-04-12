@@ -144,4 +144,37 @@ describe('main()', () => {
 			],
 		})
 	})
+
+	it('prompts before using a repo guessed from .git/config remote origin', async () => {
+		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'kup-main-test-'))
+		tempDirs.push(tempDir)
+		await fs.mkdir(path.join(tempDir, '.git'), { recursive: true })
+		const filename = path.join(tempDir, 'note.md')
+		await fs.writeFile(filename, '# Title\n\nBody\n', 'utf8')
+		await fs.writeFile(path.join(tempDir, '.git', 'config'), [
+			'[remote "origin"]',
+			'\turl = git@github.com:cssmagic/kup.git',
+		].join('\n'), 'utf8')
+		process.env.GITHUB_TOKEN = 'ghp_test_token_value_12345'
+
+		const promptSpy = vi.spyOn(inquirer, 'prompt').mockResolvedValue({ useGuessedRepo: true })
+		const postSpy = vi.spyOn(syncModule, 'postIssue').mockResolvedValue(undefined)
+
+		await expect(main({
+			_: [filename],
+			repo: '',
+			id: 0,
+		})).resolves.toBeUndefined()
+
+		expect(promptSpy).toHaveBeenCalledWith([
+			expect.objectContaining({
+				message: 'Kup guessed the GitHub repo "cssmagic/kup" from .git/config remote "origin", use it?',
+			}),
+		])
+		expect(postSpy).toHaveBeenCalledWith(expect.any(Object), 'cssmagic/kup', {
+			file: filename,
+			repoSource: 'git.origin',
+			hasRepoInMeta: false,
+		})
+	})
 })

@@ -5,6 +5,8 @@ import path from 'path'
 import { afterEach, describe, expect, it } from 'vitest'
 
 import {
+	__getRepoFromGit,
+	__getRepoFromGitConfig,
 	__getRepoFromPkgKup,
 	__getRepoFromPkgRepo,
 	__normalizeRepositoryToRepo,
@@ -52,6 +54,53 @@ describe('getRepo()', () => {
 			repo: '',
 			source: '',
 			needsConfirm: false,
+		})
+	})
+
+	it('guesses repo from .git/config when package-based lookup fails', async () => {
+		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'kup-repo-test-'))
+		tempDirs.push(tempDir)
+		const nestedDir = path.join(tempDir, 'docs', 'notes')
+		await fs.mkdir(path.join(tempDir, '.git'), { recursive: true })
+		await fs.mkdir(nestedDir, { recursive: true })
+		const sourceFile = path.join(nestedDir, 'note.md')
+		await fs.writeFile(sourceFile, '# Temporary note\n', 'utf8')
+		await fs.writeFile(path.join(tempDir, '.git', 'config'), [
+			'[core]',
+			'\trepositoryformatversion = 0',
+			'[remote "origin"]',
+			'\turl = git@github.com:cssmagic/kup.git',
+		].join('\n'), 'utf8')
+
+		const repo = await getRepo(sourceFile)
+
+		expect(repo).toEqual({
+			repo: 'cssmagic/kup',
+			source: 'git.origin',
+			needsConfirm: true,
+		})
+	})
+
+	it('prefers package.json#repository over .git/config fallback', async () => {
+		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'kup-repo-test-'))
+		tempDirs.push(tempDir)
+		await fs.mkdir(path.join(tempDir, '.git'), { recursive: true })
+		const sourceFile = path.join(tempDir, 'note.md')
+		await fs.writeFile(sourceFile, '# Temporary note\n', 'utf8')
+		await fs.writeFile(path.join(tempDir, 'package.json'), JSON.stringify({
+			repository: 'github:cssmagic/from-package',
+		}, null, '\t'), 'utf8')
+		await fs.writeFile(path.join(tempDir, '.git', 'config'), [
+			'[remote "origin"]',
+			'\turl = git@github.com:cssmagic/from-git.git',
+		].join('\n'), 'utf8')
+
+		const repo = await getRepo(sourceFile)
+
+		expect(repo).toEqual({
+			repo: 'cssmagic/from-package',
+			source: 'package.repository',
+			needsConfirm: true,
 		})
 	})
 
@@ -150,7 +199,7 @@ describe('_getRepoFromPkgKup()', () => {
 			},
 		})).toEqual({
 			repo: 'cssmagic/kup',
-			hasRepoField: true,
+			hasKupRepoField: true,
 		})
 	})
 
@@ -161,7 +210,7 @@ describe('_getRepoFromPkgKup()', () => {
 			},
 		})).toEqual({
 			repo: '',
-			hasRepoField: true,
+			hasKupRepoField: true,
 		})
 	})
 
@@ -170,7 +219,7 @@ describe('_getRepoFromPkgKup()', () => {
 			kup: {},
 		})).toEqual({
 			repo: '',
-			hasRepoField: false,
+			hasKupRepoField: false,
 		})
 	})
 })
@@ -203,5 +252,84 @@ describe('_getRepoFromPkgRepo()', () => {
 		expect(__getRepoFromPkgRepo({
 			repository: 42,
 		})).toBe('')
+	})
+})
+
+describe('_getRepoFromGitConfig()', () => {
+	it('extracts repo from remote origin url', () => {
+		expect(__getRepoFromGitConfig([
+			'[core]',
+			'\trepositoryformatversion = 0',
+			'[remote "origin"]',
+			'\turl = git+https://github.com/cssmagic/kup.git',
+		].join('\n'))).toBe('cssmagic/kup')
+	})
+
+	it('ignores other remotes when origin is absent', () => {
+		expect(__getRepoFromGitConfig([
+			'[remote "upstream"]',
+			'\turl = git@github.com:cssmagic/kup.git',
+		].join('\n'))).toBe('')
+	})
+
+	it('returns empty string when origin has no url', () => {
+		expect(__getRepoFromGitConfig([
+			'[remote "origin"]',
+			'\tfetch = +refs/heads/*:refs/remotes/origin/*',
+		].join('\n'))).toBe('')
+	})
+
+	it('returns empty string for unsupported origin url', () => {
+		expect(__getRepoFromGitConfig([
+			'[remote "origin"]',
+			'\turl = git@gitlab.com:cssmagic/kup.git',
+		].join('\n'))).toBe('')
+	})
+})
+
+describe('_getRepoFromGit()', () => {
+	it('returns repo from the nearest parent git config', async () => {
+		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'kup-repo-test-'))
+		tempDirs.push(tempDir)
+		const nestedDir = path.join(tempDir, 'docs', 'notes')
+		await fs.mkdir(path.join(tempDir, '.git'), { recursive: true })
+		await fs.mkdir(nestedDir, { recursive: true })
+		const sourceFile = path.join(nestedDir, 'note.md')
+		await fs.writeFile(sourceFile, '# Temporary note\n', 'utf8')
+		await fs.writeFile(path.join(tempDir, '.git', 'config'), [
+			'[remote "origin"]',
+			'\turl = ssh://git@github.com/cssmagic/kup.git',
+		].join('\n'), 'utf8')
+
+		await expect(__getRepoFromGit(sourceFile)).resolves.toBe('cssmagic/kup')
+	})
+
+	it('returns empty string when .git directory is missing', async () => {
+		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'kup-repo-test-'))
+		tempDirs.push(tempDir)
+		const sourceFile = path.join(tempDir, 'note.md')
+		await fs.writeFile(sourceFile, '# Temporary note\n', 'utf8')
+
+		await expect(__getRepoFromGit(sourceFile)).resolves.toBe('')
+	})
+
+	it('returns empty string when .git exists as a file', async () => {
+		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'kup-repo-test-'))
+		tempDirs.push(tempDir)
+		const sourceFile = path.join(tempDir, 'note.md')
+		await fs.writeFile(sourceFile, '# Temporary note\n', 'utf8')
+		await fs.writeFile(path.join(tempDir, '.git'), 'gitdir: /tmp/demo\n', 'utf8')
+
+		await expect(__getRepoFromGit(sourceFile)).resolves.toBe('')
+	})
+
+	it('returns empty string when git config file is missing', async () => {
+		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'kup-repo-test-'))
+		tempDirs.push(tempDir)
+		await fs.mkdir(path.join(tempDir, '.git'), { recursive: true })
+		const sourceFile = path.join(tempDir, 'note.md')
+		await fs.writeFile(sourceFile, '# Temporary note\n', 'utf8')
+
+		await expect(__getRepoFromGit(sourceFile)).resolves.toBe('')
 	})
 })

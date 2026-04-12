@@ -77,6 +77,7 @@ Kup 会把 `file.md` 文件的内容更新到 `foo/bar` 仓库的编号为 `123`
 1. Markdown 文件内的 [元数据](https://github.com/cssmagic/kup/issues/1) 的 `repo` 字段。
 1. 当前项目的 `package.json` 文件内的 `kup.repo` 字段。Kup 会以 Markdown 文件所在目录为起点逐级向上寻找 `package.json` 文件。
 1. 如果 `package.json` 文件内没有 `kup.repo` 字段，则 Kup 会尝试根据 `repository` 字段来猜测仓库名（在使用前会向用户确认）。
+1. 如果以上方式都没有成功，则 Kup 会继续查找同级或上级目录中的 `.git/config` 文件，并尝试根据其中 `remote "origin"` 的 `url` 字段来猜测仓库名（在使用前会向用户确认）。
 
 如果整个项目的同步目标都是同一个仓库，则建议采用 `kup.repo` 字段统一指定 `repo` 参数。
 
