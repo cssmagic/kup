@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from 'vitest'
 
 import {
 	validate,
+	validateDumpArgs,
 	validateFiles,
 	validateId,
 	validateRepo,
@@ -71,5 +72,26 @@ describe('validate()', () => {
 			id: 0,
 		})).toBe(false)
 		expect(errorSpy).toHaveBeenCalledTimes(3)
+	})
+
+	it('accepts dump mode without a file when --id is provided', () => {
+		expect(validate({
+			_: [],
+			dump: true,
+			repo: 'cssmagic/kup',
+			id: 3,
+		})).toBe(true)
+	})
+})
+
+describe('validateDumpArgs()', () => {
+	it('requires a file or --id in dump mode', () => {
+		expect(validateDumpArgs({
+			_: [],
+			dump: true,
+		})).toEqual({
+			status: false,
+			errorMsg: 'Must specify a local file or `--id` in dump mode!',
+		})
 	})
 })

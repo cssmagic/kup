@@ -5,7 +5,7 @@ import fs from 'fs/promises'
 import os from 'os'
 import path from 'path'
 
-import { postIssue, updateIssue } from '../../lib/sync.js'
+import { dumpIssue, postIssue, updateIssue } from '../../lib/sync.js'
 
 describe('sync', () => {
 	const tempDirs = []
@@ -190,5 +190,50 @@ describe('sync', () => {
 			}),
 		])
 		expect(logSpy).not.toHaveBeenCalledWith(`[Kup] [Notice] Updated metadata in Markdown file: ${ filename }`)
+	})
+
+	it('dumps an issue into a markdown file with metadata', async () => {
+		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'kup-sync-integration-'))
+		tempDirs.push(tempDir)
+		const filename = path.join(tempDir, '42.md')
+		const logSpy = vi.spyOn(console, 'log').mockImplementation(() => {})
+		const scope = nock('https://api.github.com', {
+			reqheaders: {
+				authorization: 'token ghp_test_token',
+			},
+		})
+			.get('/repos/cssmagic/kup/issues/42')
+			.reply(200, {
+				number: 42,
+				title: 'Need: #1',
+				body: 'Body content',
+				labels: [
+					{ name: 'bug' },
+					{ name: 'help wanted' },
+				],
+			})
+
+		await dumpIssue('cssmagic/kup', 42, {
+			file: filename,
+			repoSource: 'cli',
+		})
+
+		expect(scope.isDone()).toBe(true)
+		await expect(fs.readFile(filename, 'utf8')).resolves.toBe([
+			'---',
+			'repo: cssmagic/kup',
+			'id: 42',
+			'tags: [bug, help wanted]',
+			'title: "Need: #1"',
+			'---',
+			'',
+			'Body content',
+		].join('\n'))
+		expect(logSpy.mock.calls.map((call) => call[0])).toEqual([
+			'[Kup] Dumping "cssmagic/kup#42"...',
+			'[Kup] Dumping URL: https://github.com/cssmagic/kup/issues/42',
+			`[Kup] [Success] Dumped "cssmagic/kup#42" to "${ filename }"!`,
+		])
+		expect(logSpy).toHaveBeenCalledWith(`[Kup] [Success] Dumped "cssmagic/kup#42" to "${ filename }"!`)
 	})
 })
