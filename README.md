@@ -44,6 +44,20 @@ kup ./path/to/file.md --repo foo/bar --id 123
 
 Kup will update issue `123` in the `foo/bar` repository with the content of `file.md`.
 
+### Dump an Existing Issue
+
+```sh
+kup --dump --repo foo/bar --id 123
+```
+
+Kup will dump issue `123` from the `foo/bar` repository to `123.md` in the current directory.
+
+If you want to specify the output file, you can also use:
+
+```sh
+kup ./path/to/file.md --dump --repo foo/bar --id 123
+```
+
 ### Preparation
 
 Updating GitHub issues requires authentication, so you need to provide a GitHub token for Kup to call the GitHub API.
@@ -65,6 +79,7 @@ Option | Short | Value Type | Description | Notes
 ---|---|---|---|---
 `--repo` | `-r` | string | Specify the GitHub repository
 `--id` | `-i` | integer | Specify the issue number | <ul><li>Providing a number means updating an existing issue<li>Omitting it means publishing a new issue</ul>
+`--dump` | `-d` | - | Enable dump mode, save a GitHub issue as a local Markdown file
 `--version` | `-v` | - | Show the version number
 `--help` | `-h` | - | Show help information
 

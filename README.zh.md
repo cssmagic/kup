@@ -44,6 +44,20 @@ kup ./path/to/file.md --repo foo/bar --id 123
 
 Kup 会把 `file.md` 文件的内容更新到 `foo/bar` 仓库的编号为 `123` 的 issue。
 
+### 采集已有 issue
+
+```sh
+kup --dump --repo foo/bar --id 123
+```
+
+Kup 会把 `foo/bar` 仓库的编号为 `123` 的 issue 采集为当前目录下的 `123.md` 文件。
+
+如果你想指定输出文件，也可以这样使用：
+
+```sh
+kup ./path/to/file.md --dump --repo foo/bar --id 123
+```
+
 ### 准备工作
 
 操作 GitHub issue 是需要权限认证的，因此你需要向 Kup 提供 GitHub token，以便 Kup 调用 GitHub API。
@@ -65,6 +79,7 @@ Kup 会把 `file.md` 文件的内容更新到 `foo/bar` 仓库的编号为 `123`
 ---|---|---|---|---
 `--repo` | `-r` | 字符串 | 指定 GitHub 仓库
 `--id` | `-i` | 整数 | 指定 issue 的编号 | <ul><li>指定编号表示更新已有 issue<li>未指定编号则表示发布新 issue</ul>
+`--dump` | `-d` | - | 激活采集模式，把 GitHub issue 保存为本地 Markdown 文件
 `--version` | `-v` | - | 显示版本号
 `--help` | `-h` | - | 显示帮助信息
 
