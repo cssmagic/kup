@@ -229,7 +229,11 @@ describe('sync', () => {
 			'',
 			'Body content',
 		].join('\n'))
+		expect(logSpy.mock.calls.map((call) => call[0])).toEqual([
+			'[Kup] Dumping "cssmagic/kup#42"...',
+			'[Kup] Dumping URL: https://github.com/cssmagic/kup/issues/42',
+			`[Kup] [Success] Dumped "cssmagic/kup#42" to "${ filename }"!`,
+		])
 		expect(logSpy).toHaveBeenCalledWith(`[Kup] [Success] Dumped "cssmagic/kup#42" to "${ filename }"!`)
-		expect(logSpy).toHaveBeenCalledWith('[Kup] [Success] URL: https://github.com/cssmagic/kup/issues/42')
 	})
 })
