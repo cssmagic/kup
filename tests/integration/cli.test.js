@@ -4,7 +4,7 @@ import fs from 'fs/promises'
 import os from 'os'
 import path from 'path'
 
-import { cliPath, fixturePath, projectRoot } from '../helpers/paths.js'
+import { cliPath, projectRoot } from '../helpers/paths.js'
 
 describe('CLI', () => {
 	it('shows help output', async () => {
@@ -18,23 +18,33 @@ describe('CLI', () => {
 	})
 
 	it('supports parse-only mode for markdown without front matter', async () => {
-		const result = await execaNode(cliPath, [fixturePath('no-meta.md'), '--parse-only'], {
+		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'kup-cli-test-'))
+		const filename = path.join(tempDir, 'note.md')
+		await fs.writeFile(filename, '# 一级标题 (no-meta.md)\n\n正文\n', 'utf8')
+
+		const result = await execaNode(cliPath, [filename, '--parse-only'], {
 			cwd: projectRoot,
 		})
 
 		expect(result.stdout).toContain('[Kup] [Debug] fileInfo =')
 		expect(result.stdout).toContain("title: '一级标题 (no-meta.md)'")
 		expect(result.stdout).toContain('[Kup] Done!')
+		await fs.rm(tempDir, { recursive: true, force: true })
 	})
 
 	it('fails validation for an invalid repo argument', async () => {
-		const result = await execaNode(cliPath, [fixturePath('no-meta.md'), '--repo', 'invalid'], {
+		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'kup-cli-test-'))
+		const filename = path.join(tempDir, 'note.md')
+		await fs.writeFile(filename, '# Title\n\nBody\n', 'utf8')
+
+		const result = await execaNode(cliPath, [filename, '--repo', 'invalid'], {
 			cwd: projectRoot,
 			reject: false,
 		})
 
 		expect(result.exitCode).toBe(1)
 		expect(result.stderr).toContain('`repo` must match `{owner}/{repo}` pattern!')
+		await fs.rm(tempDir, { recursive: true, force: true })
 	})
 
 	it('prints handled main errors without a stack trace', async () => {

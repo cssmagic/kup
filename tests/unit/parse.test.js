@@ -3,6 +3,22 @@ import { describe, expect, it } from 'vitest'
 import { parse } from '../../lib/parse.js'
 
 describe('parse()', () => {
+	it('returns an empty structure for an empty file', () => {
+		expect(parse('')).toEqual({
+			meta: {},
+			title: '',
+			content: '',
+		})
+	})
+
+	it('returns an empty structure for a whitespace-only file', () => {
+		expect(parse('\n\n  \n')).toEqual({
+			meta: {},
+			title: '',
+			content: '',
+		})
+	})
+
 	it('parses front matter and keeps the h1 in content when meta.title exists', () => {
 		const input = [
 			'---',

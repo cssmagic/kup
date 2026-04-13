@@ -201,6 +201,49 @@ describe('main()', () => {
 		expect(path.basename(dumpSpy.mock.calls[0][2].file)).toBe('24.md')
 	})
 
+	it('does not read the dump target file when repo and id are both provided', async () => {
+		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'kup-main-test-'))
+		tempDirs.push(tempDir)
+		const filename = path.join(tempDir, 'output.md')
+		process.env.GITHUB_TOKEN = 'ghp_test_token_value_12345'
+
+		const dumpSpy = vi.spyOn(syncModule, 'dumpIssue').mockResolvedValue(undefined)
+
+		await expect(main({
+			_: [filename],
+			dump: true,
+			repo: 'cssmagic/kup',
+			id: 24,
+		})).resolves.toBeUndefined()
+
+		expect(dumpSpy).toHaveBeenCalledWith('cssmagic/kup', 24, {
+			file: filename,
+			repoSource: 'cli',
+		})
+	})
+
+	it('reads the dump target file metadata when id needs to be resolved from it', async () => {
+		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'kup-main-test-'))
+		tempDirs.push(tempDir)
+		const filename = path.join(tempDir, 'output.md')
+		await fs.writeFile(filename, '---\nid: 24\n---\n', 'utf8')
+		process.env.GITHUB_TOKEN = 'ghp_test_token_value_12345'
+
+		const dumpSpy = vi.spyOn(syncModule, 'dumpIssue').mockResolvedValue(undefined)
+
+		await expect(main({
+			_: [filename],
+			dump: true,
+			repo: 'cssmagic/kup',
+			id: 0,
+		})).resolves.toBeUndefined()
+
+		expect(dumpSpy).toHaveBeenCalledWith('cssmagic/kup', 24, {
+			file: filename,
+			repoSource: 'cli',
+		})
+	})
+
 	it('throws a KupError when dump mode cannot resolve the issue id', async () => {
 		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'kup-main-test-'))
 		tempDirs.push(tempDir)

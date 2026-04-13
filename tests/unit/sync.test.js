@@ -75,7 +75,7 @@ describe('confirmWriteIssueMeta()', () => {
 })
 
 describe('confirmOverwriteDumpFile()', () => {
-	it('defaults to no when asking whether to overwrite a dump file', async () => {
+	it('defaults to yes when asking whether to overwrite a dump file', async () => {
 		const promptSpy = vi.spyOn(inquirer, 'prompt').mockResolvedValue({ overwriteDumpFile: false })
 
 		await expect(confirmOverwriteDumpFile('/tmp/note.md')).resolves.toBe(false)
@@ -83,7 +83,7 @@ describe('confirmOverwriteDumpFile()', () => {
 			expect.objectContaining({
 				name: 'overwriteDumpFile',
 				type: 'confirm',
-				default: false,
+				default: true,
 				message: 'Kup is going to overwrite the local file "/tmp/note.md", OK?',
 			}),
 		])
