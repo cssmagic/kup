@@ -1,7 +1,0 @@
-{
-	"name": "kup-demo",
-	"private": true,
-	"kup": {
-		"repo": "cssmagic/kup-demo"
-	}
-}
