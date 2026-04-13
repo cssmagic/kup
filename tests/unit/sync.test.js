@@ -3,9 +3,10 @@ import os from 'os'
 import path from 'path'
 
 import { afterEach, describe, expect, it, vi } from 'vitest'
+import inquirer from 'inquirer'
 
 import { KupError } from '../../lib/error.js'
-import { buildPostIssuePayload, buildUpdateIssuePayload, postIssue, writeIssueMeta } from '../../lib/sync.js'
+import { buildPostIssuePayload, buildUpdateIssuePayload, confirmWriteIssueMeta, postIssue, writeIssueMeta } from '../../lib/sync.js'
 
 const tempDirs = []
 
@@ -42,8 +43,7 @@ describe('sync payload builders', () => {
 
 describe('postIssue()', () => {
 	it('throws a KupError when the user aborts before posting', async () => {
-		const inquirer = await import('inquirer')
-		vi.spyOn(inquirer.default, 'prompt').mockResolvedValue({ postNewIssue: false })
+		vi.spyOn(inquirer, 'prompt').mockResolvedValue({ postNewIssue: false })
 
 		await expect(postIssue({
 			meta: {},
@@ -55,6 +55,22 @@ describe('postIssue()', () => {
 				{ method: 'log', text: '[Kup] Aborted!' },
 			],
 		})
+	})
+})
+
+describe('confirmWriteIssueMeta()', () => {
+	it('defaults to yes when asking whether to write metadata back', async () => {
+		const promptSpy = vi.spyOn(inquirer, 'prompt').mockResolvedValue({ writeIssueMeta: true })
+
+		await expect(confirmWriteIssueMeta('/tmp/note.md')).resolves.toBe(true)
+		expect(promptSpy).toHaveBeenCalledWith([
+			expect.objectContaining({
+				name: 'writeIssueMeta',
+				type: 'confirm',
+				default: true,
+				message: 'Kup is going to write the new issue metadata back to "/tmp/note.md", OK?',
+			}),
+		])
 	})
 })
 

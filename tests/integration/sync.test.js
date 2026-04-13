@@ -89,7 +89,10 @@ describe('sync', () => {
 			'Body content',
 		].join('\n'), 'utf8')
 
-		vi.spyOn(inquirer, 'prompt').mockResolvedValue({ postNewIssue: true })
+		const promptSpy = vi.spyOn(inquirer, 'prompt')
+		promptSpy
+			.mockResolvedValueOnce({ postNewIssue: true })
+			.mockResolvedValueOnce({ writeIssueMeta: true })
 		nock('https://api.github.com', {
 			reqheaders: {
 				authorization: 'token ghp_test_token',
@@ -127,5 +130,65 @@ describe('sync', () => {
 			'Body content',
 		].join('\n'))
 		expect(logSpy).toHaveBeenCalledWith(`[Kup] [Notice] Updated metadata in Markdown file: ${ filename }`)
+	})
+
+	it('skips writing metadata when the user declines the write-back prompt', async () => {
+		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'kup-sync-integration-'))
+		tempDirs.push(tempDir)
+		const filename = path.join(tempDir, 'note.md')
+		const logSpy = vi.spyOn(console, 'log').mockImplementation(() => {})
+		await fs.writeFile(filename, [
+			'---',
+			'tags: []',
+			'---',
+			'',
+			'Body content',
+		].join('\n'), 'utf8')
+
+		const promptSpy = vi.spyOn(inquirer, 'prompt')
+		promptSpy
+			.mockResolvedValueOnce({ postNewIssue: true })
+			.mockResolvedValueOnce({ writeIssueMeta: false })
+		nock('https://api.github.com', {
+			reqheaders: {
+				authorization: 'token ghp_test_token',
+			},
+		})
+			.post('/repos/cssmagic/kup/issues', (body) => {
+				expect(body).toMatchObject({
+					body: 'Body content',
+					labels: ['Doc'],
+				})
+				expect(body.title).toMatch(/^Issue posted by Kup @/)
+				return true
+			})
+			.reply(201, { number: 109 })
+
+		await postIssue({
+			meta: {
+				tags: ['Doc'],
+			},
+			title: '',
+			content: 'Body content',
+		}, 'cssmagic/kup', {
+			file: filename,
+			repoSource: 'cli',
+			hasRepoInMeta: false,
+		})
+
+		await expect(fs.readFile(filename, 'utf8')).resolves.toBe([
+			'---',
+			'tags: []',
+			'---',
+			'',
+			'Body content',
+		].join('\n'))
+		expect(promptSpy).toHaveBeenNthCalledWith(2, [
+			expect.objectContaining({
+				name: 'writeIssueMeta',
+				default: true,
+			}),
+		])
+		expect(logSpy).not.toHaveBeenCalledWith(`[Kup] [Notice] Updated metadata in Markdown file: ${ filename }`)
 	})
 })

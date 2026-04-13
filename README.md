@@ -90,7 +90,7 @@ Kup can determine the `id` option in the following order of priority:
 1. The `--id` option passed on the command line.
 1. The `id` field in the Markdown file's metadata.
 
-After a file is successfully published as an issue, Kup immediately writes the `id` back into its metadata.
+After a file is successfully published as an issue, Kup writes the `id` back to the file’s metadata (with user confirmation before writing).
 
 ### How is the issue title determined?
 
