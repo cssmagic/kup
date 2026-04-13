@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { updateIssueMeta } from '../../lib/meta.js'
+import { buildIssueMarkdown, updateIssueMeta } from '../../lib/meta.js'
 
 describe('updateIssueMeta()', () => {
 	it('overwrites an empty id field instead of inserting a duplicate one', () => {
@@ -115,6 +115,52 @@ describe('updateIssueMeta()', () => {
 			'---',
 			'',
 			'Body',
+		].join('\n'))
+	})
+
+	it('serializes tags as a single-line YAML array and quotes unsafe titles', () => {
+		const input = [
+			'---',
+			'id: 18',
+			'---',
+			'',
+			'Body',
+		].join('\n')
+
+		expect(updateIssueMeta(input, {
+			id: 18,
+			tags: ['help wanted', 'true'],
+			title: 'a: b # c',
+		})).toBe([
+			'---',
+			'id: 18',
+			'tags: [help wanted, "true"]',
+			'title: "a: b # c"',
+			'---',
+			'',
+			'Body',
+		].join('\n'))
+	})
+})
+
+describe('buildIssueMarkdown()', () => {
+	it('builds dumped issue content with ordered metadata', () => {
+		expect(buildIssueMarkdown({
+			id: 42,
+			repo: 'cssmagic/kup',
+			shouldWriteRepo: true,
+			tags: ['bug', 'help wanted'],
+			title: 'Demo title',
+			body: 'Issue body',
+		})).toBe([
+			'---',
+			'repo: cssmagic/kup',
+			'id: 42',
+			'tags: [bug, help wanted]',
+			'title: Demo title',
+			'---',
+			'',
+			'Issue body',
 		].join('\n'))
 	})
 })

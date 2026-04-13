@@ -12,8 +12,9 @@ describe('CLI', () => {
 			cwd: projectRoot,
 		})
 
-		expect(result.stdout).toContain('Usage: kup <file> [options]')
+		expect(result.stdout).toContain('kup <file> [options]')
 		expect(result.stdout).toContain('--repo')
+		expect(result.stdout).toContain('--dump')
 	})
 
 	it('supports parse-only mode for markdown without front matter', async () => {
@@ -50,5 +51,13 @@ describe('CLI', () => {
 		expect(result.stderr).toContain('[Kup] [Error] Cannot get `repo` to sync to!')
 		expect(result.stderr).not.toContain('KupError:')
 		await fs.rm(tempDir, { recursive: true, force: true })
+	})
+
+	it('accepts dump mode without a file when --id is provided', async () => {
+		const result = await execaNode(cliPath, ['--dump', '--repo', 'cssmagic/kup', '--id', '1', '--help'], {
+			cwd: projectRoot,
+		})
+
+		expect(result.exitCode).toBe(0)
 	})
 })

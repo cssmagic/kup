@@ -14,8 +14,10 @@ if (isDebugging()) {
 const argv = yargs(hideBin(process.argv))
 	.scriptName('kup')
 	.usage('Kup -- A CLI tool to sync local Markdown files to GitHub issues.')
-	.usage('Usage: $0 <file> [options]')
+	.usage('Usage (publish to GitHub):  $0 <file> [options]')
+	.usage('Usage (dump to local file): $0 [file] --dump [options]')
 	.example('kup foo.md --repo aaa/bbb --id 123', '// sync foo.md to GitHub issue aaa/bbb#123')
+	.example('kup 123.md --dump --repo aaa/bbb --id 123', '// dump GitHub issue aaa/bbb#123 to 123.md')
 	.option('repo', {
 		alias: 'r',
 		type: 'string',
@@ -25,6 +27,11 @@ const argv = yargs(hideBin(process.argv))
 		alias: 'i',
 		type: 'number',
 		description: 'Specify GitHub issue ID',
+	})
+	.option('dump', {
+		alias: 'd',
+		type: 'boolean',
+		description: 'Dump a GitHub issue to a local Markdown file',
 	})
 	.option('parse-only', {
 		alias: 'p',

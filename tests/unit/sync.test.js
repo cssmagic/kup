@@ -6,7 +6,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import inquirer from 'inquirer'
 
 import { KupError } from '../../lib/error.js'
-import { buildPostIssuePayload, buildUpdateIssuePayload, confirmWriteIssueMeta, postIssue, writeIssueMeta } from '../../lib/sync.js'
+import { buildPostIssuePayload, buildUpdateIssuePayload, confirmOverwriteDumpFile, confirmWriteIssueMeta, postIssue, writeIssueMeta } from '../../lib/sync.js'
 
 const tempDirs = []
 
@@ -69,6 +69,22 @@ describe('confirmWriteIssueMeta()', () => {
 				type: 'confirm',
 				default: true,
 				message: 'Kup is going to write the new issue metadata back to "/tmp/note.md", OK?',
+			}),
+		])
+	})
+})
+
+describe('confirmOverwriteDumpFile()', () => {
+	it('defaults to no when asking whether to overwrite a dump file', async () => {
+		const promptSpy = vi.spyOn(inquirer, 'prompt').mockResolvedValue({ overwriteDumpFile: false })
+
+		await expect(confirmOverwriteDumpFile('/tmp/note.md')).resolves.toBe(false)
+		expect(promptSpy).toHaveBeenCalledWith([
+			expect.objectContaining({
+				name: 'overwriteDumpFile',
+				type: 'confirm',
+				default: false,
+				message: 'Kup is going to overwrite the local file "/tmp/note.md", OK?',
 			}),
 		])
 	})
