@@ -4,9 +4,9 @@
 
 <img src="https://user-images.githubusercontent.com/1231359/171321963-e8e73bdf-f9c8-435b-9707-318e92f1805a.png" width="150" height="80" align="right" alt="Kup logo">
 
-> A CLI tool to sync local Markdown files to GitHub issues.
+> A CLI tool to sync local Markdown files and GitHub issues bidirectionally.
 >
-> 这款命令行工具可以把本地的 Markdown 文件同步到 GitHub issue。
+> 一款命令行工具，实现本地 Markdown 文件与 GitHub Issues 的双向同步。
 
 ## 谁需要它
 
