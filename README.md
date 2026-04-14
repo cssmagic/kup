@@ -88,7 +88,7 @@ Option | Short | Value Type | Description
 
 
 
-### &nbsp;
+&nbsp;
 
 > ***
 >
@@ -96,11 +96,11 @@ Option | Short | Value Type | Description
 >
 > * Senior Fullstack Engineer · Node.js, React, Vue, TS · 10+ years
 > * Published author on “AI Coding” · GitHub 3k+ followers
-> * → Resume / Contact: https://github.com/cssmagic/Footprint
+> * → Resume / Contact: https://github.com/cssmagic/cssmagic
 >
 > ***
 
-### &nbsp;
+&nbsp;
 
 
 
