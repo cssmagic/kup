@@ -10,8 +10,8 @@ English | [中文](README.zh.md)
 
 ## Who Is It For
 
-* Bloggers who publish with GitHub issues and want to edit drafts locally, then publish new posts or update existing ones at any time.
-* Open-source authors who publish documentation through GitHub issues and want to sync docs from the repository to specific issues.
+* Bloggers who publish with GitHub issues and want to edit drafts locally.
+* Open-source authors who publish documentation through GitHub issues.
 * Anyone else who needs to update GitHub issues frequently.
 
 
@@ -75,10 +75,10 @@ If Kup cannot read a token from the environment, it will prompt you for one in t
 
 ## Command-Line Options
 
-Option | Short | Value Type | Description | Notes
----|---|---|---|---
+Option | Short | Value Type | Description
+---|---|---|---
 `--repo` | `-r` | string | Specify the GitHub repository
-`--id` | `-i` | integer | Specify the issue number | <ul><li>Providing a number means updating an existing issue<li>Omitting it means publishing a new issue</ul>
+`--id` | `-i` | integer | Specify the issue number: <ul><li>Providing a number means updating an existing issue<li>Omitting it means publishing a new issue</ul>
 `--dump` | `-d` | - | Enable dump mode, save a GitHub issue as a local Markdown file
 `--version` | `-v` | - | Show the version number
 `--help` | `-h` | - | Show help information

@@ -75,10 +75,10 @@ kup ./path/to/file.md --dump --repo foo/bar --id 123
 
 ## 命令行参数
 
-参数 | 短名 | 值类型 | 含义 | 备注
----|---|---|---|---
+参数 | 短名 | 值类型 | 含义
+---|---|---|---
 `--repo` | `-r` | 字符串 | 指定 GitHub 仓库
-`--id` | `-i` | 整数 | 指定 issue 的编号 | <ul><li>指定编号表示更新已有 issue<li>未指定编号则表示发布新 issue</ul>
+`--id` | `-i` | 整数 | 指定 issue 的编号： <ul><li>指定编号表示更新已有 issue<li>未指定编号则表示发布新 issue</ul>
 `--dump` | `-d` | - | 激活采集模式，把 GitHub issue 保存为本地 Markdown 文件
 `--version` | `-v` | - | 显示版本号
 `--help` | `-h` | - | 显示帮助信息
