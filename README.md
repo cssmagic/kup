@@ -8,6 +8,8 @@ English | [中文](README.zh.md)
 >
 > 一款命令行工具，实现本地 Markdown 文件与 GitHub Issues 的双向同步。
 
+
+
 ## Who Is It For
 
 * Bloggers who publish with GitHub issues and want to edit drafts locally.
@@ -15,15 +17,15 @@ English | [中文](README.zh.md)
 * Anyone else who needs to update GitHub issues frequently.
 
 
-## Installation
 
-Install it globally so you can call it from the command line at any time:
+## Installation
 
 ```sh
 npm install -g kup-cli
 ```
 
-(When a new version of Kup is released, run the same command again to upgrade.)
+Install it globally so you can use it anytime, anywhere from the command line. (When a new version of Kup is released, run the same command again to upgrade.)
+
 
 
 ## Usage
@@ -73,6 +75,7 @@ Updating GitHub issues requires authentication, so you need to provide a GitHub 
 If Kup cannot read a token from the environment, it will prompt you for one in the terminal.
 
 
+
 ## Command-Line Options
 
 Option | Short | Value Type | Description
@@ -82,6 +85,7 @@ Option | Short | Value Type | Description
 `--dump` | `-d` | - | Enable dump mode, save a GitHub issue as a local Markdown file
 `--version` | `-v` | - | Show the version number
 `--help` | `-h` | - | Show help information
+
 
 
 ## Advanced
@@ -132,10 +136,13 @@ What happens if there is no `tags` field in the metadata?
 
 When updating an existing issue, if the labels specified in the metadata differ from the issue's current labels, the new set completely replaces the old one.
 
+
+
 ## Documentation
 
 * [Metadata examples for Markdown files](https://github.com/cssmagic/kup/issues/1)
 * [How to generate an appropriate GitHub token for Kup](https://github.com/cssmagic/kup/issues/17)
+
 
 
 ## Other

@@ -8,6 +8,8 @@
 >
 > 一款命令行工具，实现本地 Markdown 文件与 GitHub Issues 的双向同步。
 
+
+
 ## 谁需要它
 
 * 利用 GitHub issue 写博客的作者们，可以方便地在本地编辑原稿，并随时发布新博文或更新已有博文。
@@ -15,15 +17,15 @@
 * 其它需要频繁更新 GitHub issue 的人。
 
 
-## 安装
 
-需要全局安装，以便随时在命令行调用：
+## 安装
 
 ```sh
 npm install -g kup-cli
 ```
 
-（当 Kup 发布新版时，可以再次运行这行命令升级已安装的版本。）
+需要全局安装，以便随时在命令行调用。（当 Kup 发布新版时，可以再次运行这行命令升级已安装的版本。）
+
 
 
 ## 使用方法
@@ -73,6 +75,7 @@ kup ./path/to/file.md --dump --repo foo/bar --id 123
 如果 Kup 未能从环境变量获取 token，会在命令行向你询问。
 
 
+
 ## 命令行参数
 
 参数 | 短名 | 值类型 | 含义
@@ -82,6 +85,7 @@ kup ./path/to/file.md --dump --repo foo/bar --id 123
 `--dump` | `-d` | - | 激活采集模式，把 GitHub issue 保存为本地 Markdown 文件
 `--version` | `-v` | - | 显示版本号
 `--help` | `-h` | - | 显示帮助信息
+
 
 
 ## 进阶
@@ -132,10 +136,13 @@ Kup 会通过以下线索来确定 issue 的标题，优先级递减：
 
 在更新已有 issue 时，如果元数据指定的标签与 issue 现有标签不一致，则前者会完全替代后者。
 
+
+
 ## 文档
 
 * [Markdown 文件内的元数据示例](https://github.com/cssmagic/kup/issues/1)
 * [如何为 Kup 生成合适的 GitHub token](https://github.com/cssmagic/kup/issues/17)
+
 
 
 ## 其它
