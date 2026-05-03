@@ -152,6 +152,10 @@ What happens if there is no `tags` field in the metadata?
 
 When updating an existing issue, if the labels specified in the metadata differ from the issue's current labels, the new set completely replaces the old one.
 
+### How do I specify a proxy?
+
+Use the `https_proxy` environment variable to specify a proxy. Kup will use this proxy when making requests to the GitHub API.
+
 
 
 ## Documentation
