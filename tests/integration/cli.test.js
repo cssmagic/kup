@@ -15,6 +15,7 @@ describe('CLI', () => {
 		expect(result.stdout).toContain('kup <file> [options]')
 		expect(result.stdout).toContain('--repo')
 		expect(result.stdout).toContain('--dump')
+		expect(result.stdout).not.toContain('--debug')
 	})
 
 	it('supports parse-only mode for markdown without front matter', async () => {
@@ -29,6 +30,20 @@ describe('CLI', () => {
 		expect(result.stdout).toContain('[Kup] [Debug] fileInfo =')
 		expect(result.stdout).toContain("title: '一级标题 (no-meta.md)'")
 		expect(result.stdout).toContain('[Kup] Done!')
+		await fs.rm(tempDir, { recursive: true, force: true })
+	})
+
+	it('enables internal debug mode with the hidden --debug flag', async () => {
+		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'kup-cli-test-'))
+		const filename = path.join(tempDir, 'note.md')
+		await fs.writeFile(filename, '# Title\n\nBody\n', 'utf8')
+
+		const result = await execaNode(cliPath, [filename, '--parse-only', '--debug'], {
+			cwd: projectRoot,
+		})
+
+		expect(result.stdout).toContain('[Kup] [Debug] Debug Mode is ON!')
+		expect(result.stdout).toContain('debug: true')
 		await fs.rm(tempDir, { recursive: true, force: true })
 	})
 

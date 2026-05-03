@@ -2,16 +2,70 @@ import fs from 'fs/promises'
 import os from 'os'
 import path from 'path'
 
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import inquirer from 'inquirer'
 
 import { KupError } from '../../lib/error.js'
-import { buildPostIssuePayload, buildUpdateIssuePayload, confirmOverwriteDumpFile, confirmWriteIssueMeta, postIssue, writeIssueMeta } from '../../lib/sync.js'
+import { setDebugging } from '../../lib/util.js'
+import {
+	buildPostIssuePayload,
+	buildProxyOptionsForGot,
+	buildUpdateIssuePayload,
+	confirmOverwriteDumpFile,
+	confirmWriteIssueMeta,
+	postIssue,
+	writeIssueMeta,
+} from '../../lib/sync.js'
 
 const tempDirs = []
 
+beforeEach(() => {
+	setDebugging(false)
+	delete process.env.https_proxy
+	delete process.env.HTTPS_PROXY
+})
+
 afterEach(async () => {
+	vi.restoreAllMocks()
+	setDebugging(false)
+	delete process.env.https_proxy
+	delete process.env.HTTPS_PROXY
 	await Promise.all(tempDirs.splice(0).map((dir) => fs.rm(dir, { recursive: true, force: true })))
+})
+
+describe('buildProxyOptionsForGot()', () => {
+	it('returns empty options without a proxy setting', () => {
+		expect(buildProxyOptionsForGot()).toEqual({})
+	})
+
+	it('uses https_proxy for HTTPS requests in normal mode', () => {
+		process.env.https_proxy = 'http://127.0.0.1:7890'
+
+		const options = buildProxyOptionsForGot()
+
+		expect(options.agent.https.proxy.href).toBe('http://127.0.0.1:7890/')
+		expect(options.https).toBeUndefined()
+	})
+
+	it('falls back to HTTPS_PROXY when https_proxy is absent', () => {
+		process.env.HTTPS_PROXY = 'http://127.0.0.1:7891'
+
+		const options = buildProxyOptionsForGot()
+
+		expect(options.agent.https.proxy.href).toBe('http://127.0.0.1:7891/')
+	})
+
+	it('uses the Charles proxy and relaxes TLS verification in debug mode', () => {
+		process.env.https_proxy = 'http://127.0.0.1:7890'
+		setDebugging(true)
+
+		const options = buildProxyOptionsForGot()
+
+		expect(options.agent.https.proxy.href).toBe('http://127.0.0.1:8888/')
+		expect(options.https).toEqual({
+			rejectUnauthorized: false,
+		})
+	})
 })
 
 describe('sync payload builders', () => {
