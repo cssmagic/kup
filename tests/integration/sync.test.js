@@ -6,6 +6,7 @@ import os from 'os'
 import path from 'path'
 
 import { dumpIssue, postIssue, updateIssue } from '../../lib/sync.js'
+import { setDebugging } from '../../lib/util.js'
 
 describe('sync', () => {
 	const tempDirs = []
@@ -20,12 +21,18 @@ describe('sync', () => {
 
 	beforeEach(() => {
 		process.env.GITHUB_TOKEN = 'ghp_test_token'
+		delete process.env.https_proxy
+		delete process.env.HTTPS_PROXY
+		setDebugging(false)
 	})
 
 	afterEach(() => {
 		vi.restoreAllMocks()
 		nock.cleanAll()
 		delete process.env.GITHUB_TOKEN
+		delete process.env.https_proxy
+		delete process.env.HTTPS_PROXY
+		setDebugging(false)
 	})
 
 	afterEach(async () => {

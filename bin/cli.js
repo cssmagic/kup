@@ -2,14 +2,9 @@
 import yargs from 'yargs'
 import { hideBin } from 'yargs/helpers'
 import { printKupError } from '../lib/error.js'
-import { isDebugging } from '../lib/util.js'
+import { isDebugging, setDebugging } from '../lib/util.js'
 import { main } from '../lib/main.js'
 import { validate } from '../lib/validate.js'
-
-if (isDebugging()) {
-	console.log('[Kup] [Debug] Debug Mode is ON!')
-	console.log('')
-}
 
 const argv = yargs(hideBin(process.argv))
 	.scriptName('kup')
@@ -39,12 +34,20 @@ const argv = yargs(hideBin(process.argv))
 		description: 'Only parse file, without posting or syncing',
 		hidden: true,
 	})
+	.option('debug', {
+		type: 'boolean',
+		hidden: true,
+	})
 	.alias('v', 'version')
 	.alias('h', 'help')
 	.parse()
 
 // debug
+setDebugging(argv.debug)
+
 if (isDebugging()) {
+	console.log('[Kup] [Debug] Debug Mode is ON!')
+	console.log('')
 	console.log('[Kup] [Debug] argv =', argv)
 }
 
