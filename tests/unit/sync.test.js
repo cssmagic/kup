@@ -113,6 +113,13 @@ describe('postIssue()', () => {
 })
 
 describe('confirmWriteIssueMeta()', () => {
+	it('returns true without prompting in yes mode', async () => {
+		const promptSpy = vi.spyOn(inquirer, 'prompt')
+
+		await expect(confirmWriteIssueMeta('/tmp/note.md', { yes: true })).resolves.toBe(true)
+		expect(promptSpy).not.toHaveBeenCalled()
+	})
+
 	it('defaults to yes when asking whether to write metadata back', async () => {
 		const promptSpy = vi.spyOn(inquirer, 'prompt').mockResolvedValue({ writeIssueMeta: true })
 
@@ -129,6 +136,13 @@ describe('confirmWriteIssueMeta()', () => {
 })
 
 describe('confirmOverwriteDumpFile()', () => {
+	it('returns true without prompting in yes mode', async () => {
+		const promptSpy = vi.spyOn(inquirer, 'prompt')
+
+		await expect(confirmOverwriteDumpFile('/tmp/note.md', { yes: true })).resolves.toBe(true)
+		expect(promptSpy).not.toHaveBeenCalled()
+	})
+
 	it('defaults to yes when asking whether to overwrite a dump file', async () => {
 		const promptSpy = vi.spyOn(inquirer, 'prompt').mockResolvedValue({ overwriteDumpFile: false })
 

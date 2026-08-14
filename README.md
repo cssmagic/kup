@@ -74,6 +74,16 @@ Updating GitHub issues requires authentication, so you need to provide a GitHub 
 
 If Kup cannot read a token from the environment, it will prompt you for one in the terminal.
 
+### Skip Confirmation Prompts
+
+For scripts and CI, pass `--yes` (or `-y`) to automatically accept every Yes/No confirmation prompt:
+
+```sh
+kup ./path/to/file.md --repo foo/bar --yes
+```
+
+This includes using an inferred repository, publishing a new issue, writing issue metadata back to the Markdown file, and overwriting an existing dump file. This option does not suppress command output. If `GITHUB_TOKEN` is not set, Kup will still prompt you for a token; set the environment variable in advance for unattended use.
+
 
 
 ## Command-Line Options
@@ -83,6 +93,7 @@ Option | Short | Value Type | Description
 `--repo` | `-r` | string | Specify the GitHub repository
 `--id` | `-i` | integer | Specify the issue number: <ul><li>Providing a number means updating an existing issue<li>Omitting it means publishing a new issue</ul>
 `--dump` | `-d` | - | Enable dump mode, save a GitHub issue as a local Markdown file
+`--yes` | `-y` | - | Answer yes to all confirmation prompts
 `--version` | `-v` | - | Show the version number
 `--help` | `-h` | - | Show help information
 

@@ -92,7 +92,37 @@ describe('main()', () => {
 			file: filename,
 			repoSource: 'cli',
 			hasRepoInMeta: false,
+			yes: false,
 		})
+	})
+
+	it('still prompts for a token in yes mode when GITHUB_TOKEN is missing', async () => {
+		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'kup-main-test-'))
+		tempDirs.push(tempDir)
+		const filename = path.join(tempDir, 'note.md')
+		await fs.writeFile(filename, '# Title\n\nBody\n', 'utf8')
+
+		const promptSpy = vi.spyOn(inquirer, 'prompt').mockResolvedValue({
+			token: 'ghp_test_token_value_12345',
+		})
+		const postSpy = vi.spyOn(syncModule, 'postIssue').mockResolvedValue(undefined)
+
+		await expect(main({
+			_: [filename],
+			repo: 'cssmagic/kup',
+			id: 0,
+			yes: true,
+		})).resolves.toBeUndefined()
+
+		expect(promptSpy).toHaveBeenCalledWith([
+			expect.objectContaining({
+				name: 'token',
+				type: 'input',
+			}),
+		])
+		expect(postSpy).toHaveBeenCalledWith(expect.any(Object), 'cssmagic/kup', expect.objectContaining({
+			yes: true,
+		}))
 	})
 
 	it('prompts before using a repo guessed from package.json#repository', async () => {
@@ -121,6 +151,36 @@ describe('main()', () => {
 			file: filename,
 			repoSource: 'package.repository',
 			hasRepoInMeta: false,
+			yes: false,
+		})
+	})
+
+	it('uses a guessed repo without prompting in yes mode', async () => {
+		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'kup-main-test-'))
+		tempDirs.push(tempDir)
+		const filename = path.join(tempDir, 'note.md')
+		await fs.writeFile(filename, '# Title\n\nBody\n', 'utf8')
+		await fs.writeFile(path.join(tempDir, 'package.json'), JSON.stringify({
+			repository: 'github:cssmagic/kup',
+		}, null, '\t'), 'utf8')
+		process.env.GITHUB_TOKEN = 'ghp_test_token_value_12345'
+
+		const promptSpy = vi.spyOn(inquirer, 'prompt')
+		const postSpy = vi.spyOn(syncModule, 'postIssue').mockResolvedValue(undefined)
+
+		await expect(main({
+			_: [filename],
+			repo: '',
+			id: 0,
+			yes: true,
+		})).resolves.toBeUndefined()
+
+		expect(promptSpy).not.toHaveBeenCalled()
+		expect(postSpy).toHaveBeenCalledWith(expect.any(Object), 'cssmagic/kup', {
+			file: filename,
+			repoSource: 'package.repository',
+			hasRepoInMeta: false,
+			yes: true,
 		})
 	})
 
@@ -177,6 +237,7 @@ describe('main()', () => {
 			file: filename,
 			repoSource: 'git.origin',
 			hasRepoInMeta: false,
+			yes: false,
 		})
 	})
 
@@ -193,10 +254,12 @@ describe('main()', () => {
 			dump: true,
 			repo: 'cssmagic/kup',
 			id: 24,
+			yes: true,
 		})).resolves.toBeUndefined()
 
 		expect(dumpSpy).toHaveBeenCalledWith('cssmagic/kup', 24, expect.objectContaining({
 			repoSource: 'cli',
+			yes: true,
 		}))
 		expect(path.basename(dumpSpy.mock.calls[0][2].file)).toBe('24.md')
 	})
@@ -219,6 +282,7 @@ describe('main()', () => {
 		expect(dumpSpy).toHaveBeenCalledWith('cssmagic/kup', 24, {
 			file: filename,
 			repoSource: 'cli',
+			yes: false,
 		})
 	})
 
@@ -241,6 +305,7 @@ describe('main()', () => {
 		expect(dumpSpy).toHaveBeenCalledWith('cssmagic/kup', 24, {
 			file: filename,
 			repoSource: 'cli',
+			yes: false,
 		})
 	})
 

@@ -15,7 +15,22 @@ describe('CLI', () => {
 		expect(result.stdout).toContain('kup <file> [options]')
 		expect(result.stdout).toContain('--repo')
 		expect(result.stdout).toContain('--dump')
+		expect(result.stdout).toContain('-y, --yes')
 		expect(result.stdout).not.toContain('--debug')
+	})
+
+	it('supports -y as an alias for --yes', async () => {
+		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'kup-cli-test-'))
+		const filename = path.join(tempDir, 'note.md')
+		await fs.writeFile(filename, '# Title\n\nBody\n', 'utf8')
+
+		const result = await execaNode(cliPath, [filename, '--parse-only', '--debug', '-y'], {
+			cwd: projectRoot,
+		})
+
+		expect(result.stdout).toContain('yes: true')
+		expect(result.stdout).toContain('y: true')
+		await fs.rm(tempDir, { recursive: true, force: true })
 	})
 
 	it('supports parse-only mode for markdown without front matter', async () => {

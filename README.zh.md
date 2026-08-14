@@ -74,6 +74,16 @@ kup ./path/to/file.md --dump --repo foo/bar --id 123
 
 如果 Kup 未能从环境变量获取 token，会在命令行向你询问。
 
+### 跳过确认提示
+
+在脚本和 CI 中，可以传入 `--yes`（或 `-y`）来自动接受所有 Yes/No 类型的确认提示：
+
+```sh
+kup ./path/to/file.md --repo foo/bar --yes
+```
+
+这包括采用推断出的仓库、发布新 issue、把 issue 元数据写回 Markdown 文件，以及覆盖已有的 dump 文件。该参数不会屏蔽命令输出。如果没有设置 `GITHUB_TOKEN`，Kup 仍会询问 token；无人值守调用时应提前设置该环境变量。
+
 
 
 ## 命令行参数
@@ -83,6 +93,7 @@ kup ./path/to/file.md --dump --repo foo/bar --id 123
 `--repo` | `-r` | 字符串 | 指定 GitHub 仓库
 `--id` | `-i` | 整数 | 指定 issue 的编号： <ul><li>指定编号表示更新已有 issue<li>未指定编号则表示发布新 issue</ul>
 `--dump` | `-d` | - | 激活采集模式，把 GitHub issue 保存为本地 Markdown 文件
+`--yes` | `-y` | - | 自动接受所有确认提示
 `--version` | `-v` | - | 显示版本号
 `--help` | `-h` | - | 显示帮助信息
 

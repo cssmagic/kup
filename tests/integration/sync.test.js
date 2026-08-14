@@ -82,7 +82,7 @@ describe('sync', () => {
 		expect(logSpy).toHaveBeenCalledWith('[Kup] [Success] URL: https://github.com/cssmagic/kup/issues/99')
 	})
 
-	it('writes id back to the markdown file after posting a new issue', async () => {
+	it('posts and writes id back without prompting in yes mode', async () => {
 		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'kup-sync-integration-'))
 		tempDirs.push(tempDir)
 		const filename = path.join(tempDir, 'note.md')
@@ -97,9 +97,6 @@ describe('sync', () => {
 		].join('\n'), 'utf8')
 
 		const promptSpy = vi.spyOn(inquirer, 'prompt')
-		promptSpy
-			.mockResolvedValueOnce({ postNewIssue: true })
-			.mockResolvedValueOnce({ writeIssueMeta: true })
 		nock('https://api.github.com', {
 			reqheaders: {
 				authorization: 'token ghp_test_token',
@@ -126,6 +123,7 @@ describe('sync', () => {
 			file: filename,
 			repoSource: 'package',
 			hasRepoInMeta: false,
+			yes: true,
 		})
 
 		await expect(fs.readFile(filename, 'utf8')).resolves.toBe([
@@ -136,6 +134,7 @@ describe('sync', () => {
 			'',
 			'Body content',
 		].join('\n'))
+		expect(promptSpy).not.toHaveBeenCalled()
 		expect(logSpy).toHaveBeenCalledWith(`[Kup] [Notice] Updated metadata in Markdown file: ${ filename }`)
 	})
 
@@ -204,6 +203,8 @@ describe('sync', () => {
 		tempDirs.push(tempDir)
 		const filename = path.join(tempDir, '42.md')
 		const logSpy = vi.spyOn(console, 'log').mockImplementation(() => {})
+		const promptSpy = vi.spyOn(inquirer, 'prompt')
+		await fs.writeFile(filename, 'Existing content', 'utf8')
 		const scope = nock('https://api.github.com', {
 			reqheaders: {
 				authorization: 'token ghp_test_token',
@@ -223,9 +224,11 @@ describe('sync', () => {
 		await dumpIssue('cssmagic/kup', 42, {
 			file: filename,
 			repoSource: 'cli',
+			yes: true,
 		})
 
 		expect(scope.isDone()).toBe(true)
+		expect(promptSpy).not.toHaveBeenCalled()
 		await expect(fs.readFile(filename, 'utf8')).resolves.toBe([
 			'---',
 			'repo: cssmagic/kup',

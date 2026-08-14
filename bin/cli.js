@@ -28,6 +28,11 @@ const argv = yargs(hideBin(process.argv))
 		type: 'boolean',
 		description: 'Dump a GitHub issue to a local Markdown file',
 	})
+	.option('yes', {
+		alias: 'y',
+		type: 'boolean',
+		description: 'Answer yes to all confirmation prompts',
+	})
 	.option('parse-only', {
 		alias: 'p',
 		type: 'boolean',
