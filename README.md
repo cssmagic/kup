@@ -99,22 +99,6 @@ Option | Short | Value Type | Description
 
 
 
-&nbsp;
-
-> ***
->
-> ### **🙋‍♂️ Open to Work (Remote, Global)**
->
-> * Senior Fullstack Engineer · Node.js, React, Vue, TS · 10+ years
-> * Published author on “AI Coding” · GitHub 3k+ followers
-> * → Resume / Contact: https://github.com/cssmagic/cssmagic
->
-> ***
-
-&nbsp;
-
-
-
 ## Advanced
 
 ### How can I specify the `repo` option more conveniently?
